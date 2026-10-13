@@ -1,4 +1,4 @@
-# AegisLock Repair Mode 0.1.0
+# AegisLock Repair Mode 0.1.1
 
 面向越狱 iPhone 的维修/访客模式原型。目标：维修人员即使知道设备锁屏密码，也不能退出维修模式；退出只接受单独的 AegisLock 数字密码。
 
@@ -56,7 +56,7 @@ RootHide 官方文档说明其 Theos 支持从使用 rootless 路径宏的现有
 
 ## 已知限制 / 下一步
 
-这是 0.1.0 原型，不是苹果硬件级安全边界：
+这是早期原型，不是苹果硬件级安全边界：
 
 - 有 Root/SSH/终端能力的人可修改 preference 文件、卸载 tweak 或进入安全模式绕过。
 - 目前主要保护“打开 App”；尚未完整屏蔽 Spotlight 搜索结果、Siri、通知中心内容、App Switcher 历史快照和 USB/SSH。

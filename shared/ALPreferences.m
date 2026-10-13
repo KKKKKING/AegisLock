@@ -5,19 +5,29 @@
 
 NSString * const ALPrefsDomain = @"com.aegislock.repairmode";
 NSString * const ALPrefsChangedNotification = @"com.aegislock.repairmode/preferences.changed";
+NSString * const ALDisableRepairModeNotification = @"com.aegislock.repairmode/disable";
+
+static NSString *ALPreferencesFilePath(void) {
+    return [@"/var/mobile/Library/Preferences" stringByAppendingPathComponent:
+            [ALPrefsDomain stringByAppendingPathExtension:@"plist"]];
+}
 
 static NSDictionary *ALReadPrefs(void) {
-    CFPreferencesAppSynchronize((__bridge CFStringRef)ALPrefsDomain);
+    CFPreferencesSynchronize((__bridge CFStringRef)ALPrefsDomain,
+                             kCFPreferencesCurrentUser,
+                             kCFPreferencesAnyHost);
     CFArrayRef keys = CFPreferencesCopyKeyList((__bridge CFStringRef)ALPrefsDomain,
                                                 kCFPreferencesCurrentUser,
                                                 kCFPreferencesAnyHost);
-    if (!keys) return @{};
+    if (!keys) return [NSDictionary dictionaryWithContentsOfFile:ALPreferencesFilePath()] ?: @{};
     CFDictionaryRef values = CFPreferencesCopyMultiple(keys,
                                                         (__bridge CFStringRef)ALPrefsDomain,
                                                         kCFPreferencesCurrentUser,
                                                         kCFPreferencesAnyHost);
     CFRelease(keys);
-    return CFBridgingRelease(values) ?: @{};
+    NSDictionary *preferences = CFBridgingRelease(values) ?: @{};
+    NSDictionary *diskPreferences = [NSDictionary dictionaryWithContentsOfFile:ALPreferencesFilePath()];
+    return diskPreferences.count ? diskPreferences : preferences;
 }
 
 static void ALWrite(NSString *key, id value) {
@@ -26,7 +36,9 @@ static void ALWrite(NSString *key, id value) {
                           (__bridge CFStringRef)ALPrefsDomain,
                           kCFPreferencesCurrentUser,
                           kCFPreferencesAnyHost);
-    CFPreferencesAppSynchronize((__bridge CFStringRef)ALPrefsDomain);
+    CFPreferencesSynchronize((__bridge CFStringRef)ALPrefsDomain,
+                             kCFPreferencesCurrentUser,
+                             kCFPreferencesAnyHost);
     notify_post(ALPrefsChangedNotification.UTF8String);
 }
 

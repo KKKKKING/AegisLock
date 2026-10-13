@@ -1,6 +1,7 @@
 #import "RootListController.h"
 #import <Preferences/PSSpecifier.h>
 #import <UIKit/UIKit.h>
+#import <notify.h>
 #import "ALPreferences.h"
 
 @implementation RootListController
@@ -24,18 +25,17 @@
             [self reloadSpecifier:specifier animated:YES];
             return;
         }
-        if (ALRepairModeEnabled()) {
-            [self promptForPasscodeWithTitle:@"退出维修模式" completion:^(NSString *pass) {
-                if (ALVerifyPasscode(pass)) {
-                    ALSetRepairMode(NO);
-                    [self reloadSpecifier:specifier animated:YES];
-                } else {
-                    [self showInfo:@"密码错误。维修模式保持开启。"];
-                    [self reloadSpecifier:specifier animated:YES];
-                }
-            }];
-            return;
-        }
+        [self promptForPasscodeWithTitle:@"退出维修模式" completion:^(NSString *pass) {
+            if (ALVerifyPasscode(pass)) {
+                ALSetRepairMode(NO);
+                notify_post(ALDisableRepairModeNotification.UTF8String);
+                [self reloadSpecifier:specifier animated:YES];
+            } else {
+                [self showInfo:@"密码错误。维修模式保持开启。"];
+                [self reloadSpecifier:specifier animated:YES];
+            }
+        }];
+        return;
     }
     [super setPreferenceValue:value specifier:specifier];
 }
@@ -66,9 +66,13 @@
 }
 
 - (void)disableRepairMode {
-    if (!ALRepairModeEnabled()) { [self showInfo:@"维修模式当前未开启。"] ; return; }
     [self promptForPasscodeWithTitle:@"输入独立密码退出" completion:^(NSString *pass) {
-        if (ALVerifyPasscode(pass)) { ALSetRepairMode(NO); [self reloadSpecifiers]; [self showInfo:@"维修模式已关闭。"] ; }
+        if (ALVerifyPasscode(pass)) {
+            ALSetRepairMode(NO);
+            notify_post(ALDisableRepairModeNotification.UTF8String);
+            [self reloadSpecifiers];
+            [self showInfo:@"维修模式已关闭。"];
+        }
         else [self showInfo:@"密码错误。"];
     }];
 }

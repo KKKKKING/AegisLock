@@ -4,6 +4,7 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <AVFoundation/AVFoundation.h>
 #import <math.h>
+#import <notify.h>
 #import "ALPreferences.h"
 
 @interface RootViewController ()
@@ -123,13 +124,16 @@ static NSData *ALToneWaveData(void) {
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker { [picker dismissViewControllerAnimated:YES completion:nil]; }
 
 - (void)promptExitRepairMode {
-    if (!ALRepairModeEnabled()) { [self alert:@"维修模式未开启" detail:@""]; return; }
     UIAlertController *a=[UIAlertController alertControllerWithTitle:@"退出维修模式" message:@"请输入 AegisLock 独立密码。设备锁屏密码和 Face ID 在这里无效。" preferredStyle:UIAlertControllerStyleAlert];
     [a addTextFieldWithConfigurationHandler:^(UITextField *tf){ tf.secureTextEntry=YES; tf.keyboardType=UIKeyboardTypeNumberPad; }];
     [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [a addAction:[UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action){
         NSString *pass=a.textFields.firstObject.text ?: @"";
-        if (ALVerifyPasscode(pass)) { ALSetRepairMode(NO); [self alert:@"维修模式已关闭" detail:@"所有 App 已恢复访问。建议退出 AegisRepair 后重新锁屏一次。"] ; }
+        if (ALVerifyPasscode(pass)) {
+            ALSetRepairMode(NO);
+            notify_post(ALDisableRepairModeNotification.UTF8String);
+            [self alert:@"维修模式已关闭" detail:@"所有 App 已恢复访问。建议退出 AegisRepair 后重新锁屏一次。"];
+        }
         else { [self alert:@"密码错误" detail:@"维修模式保持开启。"] ; }
     }]];
     [self presentViewController:a animated:YES completion:nil];

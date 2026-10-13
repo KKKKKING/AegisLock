@@ -97,6 +97,12 @@ static void ALPrefsChanged(int token) {
         notify_register_dispatch(ALPrefsChangedNotification.UTF8String, &token,
                                  dispatch_get_main_queue(), ^(int t) { ALPrefsChanged(t); });
 
+        int disableToken = 0;
+        notify_register_dispatch(ALDisableRepairModeNotification.UTF8String, &disableToken,
+                                 dispatch_get_main_queue(), ^(__unused int t) {
+            ALSetRepairMode(NO);
+        });
+
         dispatch_async(dispatch_get_main_queue(), ^{ ALCheckCurrentApplication(); });
     }
 }

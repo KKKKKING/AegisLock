@@ -8,6 +8,7 @@ extern "C" {
 
 FOUNDATION_EXPORT NSString * const ALPrefsDomain;
 FOUNDATION_EXPORT NSString * const ALPrefsChangedNotification;
+FOUNDATION_EXPORT NSString * const ALDisableRepairModeNotification;
 
 BOOL ALRepairModeEnabled(void);
 NSArray<NSString *> *ALAllowedBundleIDs(void);

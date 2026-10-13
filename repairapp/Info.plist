@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleDisplayName</key><string>AegisRepair</string>
+<key>CFBundleIdentifier</key><string>com.aegislock.repair</string>
+<key>CFBundleName</key><string>AegisRepair</string>
+<key>CFBundleExecutable</key><string>AegisRepair</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleVersion</key><string>0.1.0</string>
+<key>CFBundleShortVersionString</key><string>0.1.0</string>
+<key>LSRequiresIPhoneOS</key><true/>
+<key>UILaunchScreen</key><dict/>
+<key>NSCameraUsageDescription</key><string>用于维修人员测试前后摄像头，不会自动保存照片。</string>
+</dict></plist>

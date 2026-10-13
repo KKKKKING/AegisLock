@@ -1,0 +1,9 @@
+Package: com.aegislock.repairmode
+Name: AegisLock Repair Mode
+Version: 0.1.0
+Architecture: iphoneos-arm64
+Description: Independent-passcode repair/guest mode with a privacy-safe hardware test app.
+Maintainer: K King
+Author: K King
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader

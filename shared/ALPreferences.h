@@ -2,6 +2,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 FOUNDATION_EXPORT NSString * const ALPrefsDomain;
 FOUNDATION_EXPORT NSString * const ALPrefsChangedNotification;
 
@@ -13,5 +17,9 @@ BOOL ALVerifyPasscode(NSString *passcode);
 BOOL ALSetPasscode(NSString *passcode);
 void ALSetRepairMode(BOOL enabled);
 NSString *ALBlockedMessage(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 NS_ASSUME_NONNULL_END

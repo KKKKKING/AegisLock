@@ -62,16 +62,18 @@ BOOL ALRepairModeEnabled(void) {
 }
 
 NSArray<NSString *> *ALAllowedBundleIDs(void) {
-    id raw = ALReadPrefs()[@"allowedBundleIDs"];
+    NSDictionary *preferences = ALReadPrefs();
+    id raw = preferences[@"allowedBundleIDs"];
+    BOOL configured = [preferences[@"allowedAppsConfigured"] boolValue];
     NSMutableOrderedSet *set = [NSMutableOrderedSet orderedSetWithArray:@[
         @"com.aegislock.repair",
         @"com.apple.springboard"
     ]];
-    if ([raw isKindOfClass:NSArray.class]) {
+    if (configured && [raw isKindOfClass:NSArray.class]) {
         for (id value in (NSArray *)raw) {
             if ([value isKindOfClass:NSString.class] && [value length]) [set addObject:value];
         }
-    } else if ([raw isKindOfClass:NSString.class]) {
+    } else if (configured && [raw isKindOfClass:NSString.class]) {
         NSCharacterSet *trim = NSCharacterSet.whitespaceAndNewlineCharacterSet;
         for (NSString *part in [raw componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",;\n"]]) {
             NSString *value = [part stringByTrimmingCharactersInSet:trim];
@@ -91,6 +93,7 @@ void ALSetAllowedBundleIDs(NSArray<NSString *> *bundleIDs) {
         }
     }
     ALWrite(@"allowedBundleIDs", clean.array);
+    ALWrite(@"allowedAppsConfigured", @YES);
 }
 
 BOOL ALIsBundleAllowed(NSString *bundleID) {

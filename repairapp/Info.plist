@@ -6,8 +6,8 @@
 <key>CFBundleName</key><string>AegisRepair</string>
 <key>CFBundleExecutable</key><string>AegisRepair</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>1.0.3</string>
-<key>CFBundleShortVersionString</key><string>1.0.3</string>
+<key>CFBundleVersion</key><string>1.0.4</string>
+<key>CFBundleShortVersionString</key><string>1.0.4</string>
 <key>CFBundleIconFiles</key>
 <array><string>AppIcon60x60</string></array>
 <key>CFBundleIcons</key>

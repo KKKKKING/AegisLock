@@ -106,33 +106,23 @@
     self.definesPresentationContext = YES;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 1; }
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 2; }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return MAX((NSInteger)self.filteredApplications.count, 1);
+    return [self applicationsInSection:section].count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return @"维修模式白名单";
+    return section == 0 ? @"用户安装的 App" : @"系统 App";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    return @"开启后，该 App 在维修模式中可以正常使用。AegisRepair 始终可用。";
+    return section == 1 ? @"所有 App 默认禁止打开。开启开关后，该 App 才能在维修模式中使用；AegisRepair 始终可用。" : nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (!self.filteredApplications.count) {
-        UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.textLabel.text = @"没有找到匹配的 App";
-        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.textColor = UIColor.secondaryLabelColor;
-        cell.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        return cell;
-    }
-
     ALApplicationCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Application" forIndexPath:indexPath];
-    NSDictionary *application = self.filteredApplications[indexPath.row];
+    NSDictionary *application = [self applicationsInSection:indexPath.section][indexPath.row];
     NSString *bundleID = application[@"bundleID"];
     cell.applicationNameLabel.text = application[@"name"];
     cell.bundleIdentifierLabel.text = bundleID;
@@ -142,6 +132,12 @@
     cell.allowSwitch.on = [ALAllowedBundleIDs() containsObject:bundleID];
     [cell.allowSwitch addTarget:self action:@selector(allowSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     return cell;
+}
+
+- (NSArray<NSDictionary *> *)applicationsInSection:(NSInteger)section {
+    NSString *type = section == 0 ? @"User" : @"System";
+    return [self.filteredApplications filteredArrayUsingPredicate:
+            [NSPredicate predicateWithFormat:@"type == %@", type]];
 }
 
 - (void)allowSwitchChanged:(UISwitch *)sender {
@@ -167,6 +163,15 @@
                    [application[@"bundleID"] localizedCaseInsensitiveContainsString:query];
         }];
         self.filteredApplications = [self.applications filteredArrayUsingPredicate:predicate];
+    }
+    if (!self.filteredApplications.count) {
+        UILabel *empty = [[UILabel alloc] initWithFrame:self.tableView.bounds];
+        empty.text = @"没有找到匹配的 App";
+        empty.textAlignment = NSTextAlignmentCenter;
+        empty.textColor = UIColor.secondaryLabelColor;
+        self.tableView.backgroundView = empty;
+    } else {
+        self.tableView.backgroundView = nil;
     }
     [self.tableView reloadData];
 }
@@ -196,11 +201,14 @@
         if (type.length && ![type isEqualToString:@"User"] && ![type isEqualToString:@"System"]) continue;
         if (![self isVisibleLaunchableApplication:proxy bundleID:bundleID bundleURL:bundleURL]) continue;
 
-        NSInteger score = [type isEqualToString:@"User"] ? 30 : 10;
+        BOOL userApplication = [type isEqualToString:@"User"] ||
+                               [bundleURL.path.lowercaseString containsString:@"/var/containers/bundle/application/"];
+        NSString *category = userApplication ? @"User" : @"System";
+        NSInteger score = userApplication ? 30 : 10;
         if ([bundleID isEqualToString:@"com.apple.Preferences"] || [bundleID isEqualToString:@"com.apple.MobileAddressBook"]) score += 100;
         if ([self iconForBundleIdentifier:bundleID]) score += 5;
         NSString *nameKey = name.lowercaseString;
-        NSDictionary *candidate = @{ @"name": name, @"bundleID": bundleID, @"score": @(score) };
+        NSDictionary *candidate = @{ @"name": name, @"bundleID": bundleID, @"type": category, @"score": @(score) };
         NSDictionary *existing = bestByName[nameKey];
         if (!existing || [candidate[@"score"] integerValue] > [existing[@"score"] integerValue]) bestByName[nameKey] = candidate;
     }

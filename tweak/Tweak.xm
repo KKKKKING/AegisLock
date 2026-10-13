@@ -25,73 +25,43 @@ static void ALSuspendApplication(void) {
     }
 }
 
-static void ALShowShieldAndSuspend(void) {
+static void ALDismissAlertAndSuspend(void) {
+    ALShieldWindow.hidden = YES;
+    ALShieldWindow.rootViewController = nil;
+    ALShieldWindow = nil;
+    ALHandlingBlock = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.08 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), ^{ ALSuspendApplication(); });
+}
+
+static void ALShowBlockedAlert(NSString *bundleID, NSString *appName) {
     if (ALHandlingBlock) return;
     ALHandlingBlock = YES;
+    ALAppendAccessLog(bundleID, appName);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         CGRect frame = UIScreen.mainScreen.bounds;
         ALShieldWindow = [[UIWindow alloc] initWithFrame:frame];
         ALShieldWindow.windowLevel = UIWindowLevelAlert + 5000;
-        ALShieldWindow.backgroundColor = UIColor.systemBackgroundColor;
+        ALShieldWindow.backgroundColor = UIColor.clearColor;
 
         UIViewController *vc = [UIViewController new];
-        vc.view.backgroundColor = UIColor.systemBackgroundColor;
-
-        UILabel *icon = [[UILabel alloc] initWithFrame:CGRectZero];
-        icon.translatesAutoresizingMaskIntoConstraints = NO;
-        icon.text = @"🔒";
-        icon.font = [UIFont systemFontOfSize:54];
-        icon.textAlignment = NSTextAlignmentCenter;
-
-        UILabel *title = [[UILabel alloc] initWithFrame:CGRectZero];
-        title.translatesAutoresizingMaskIntoConstraints = NO;
-        title.text = ALBlockedMessage();
-        title.font = [UIFont systemFontOfSize:20 weight:UIFontWeightSemibold];
-        title.textAlignment = NSTextAlignmentCenter;
-        title.numberOfLines = 0;
-
-        UILabel *detail = [[UILabel alloc] initWithFrame:CGRectZero];
-        detail.translatesAutoresizingMaskIntoConstraints = NO;
-        detail.text = @"请使用 AegisRepair 进行硬件测试。";
-        detail.font = [UIFont systemFontOfSize:14];
-        detail.textColor = UIColor.secondaryLabelColor;
-        detail.textAlignment = NSTextAlignmentCenter;
-        detail.numberOfLines = 0;
-
-        UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
-        closeButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [closeButton setTitle:@"返回桌面" forState:UIControlStateNormal];
-        closeButton.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
-        closeButton.backgroundColor = UIColor.systemBlueColor;
-        [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-        closeButton.layer.cornerRadius = 12;
-        [closeButton addAction:[UIAction actionWithHandler:^(__unused UIAction *action) {
-            ALSuspendApplication();
-        }] forControlEvents:UIControlEventTouchUpInside];
-
-        [vc.view addSubview:icon];
-        [vc.view addSubview:title];
-        [vc.view addSubview:detail];
-        [vc.view addSubview:closeButton];
-        [NSLayoutConstraint activateConstraints:@[
-            [icon.centerXAnchor constraintEqualToAnchor:vc.view.centerXAnchor],
-            [icon.centerYAnchor constraintEqualToAnchor:vc.view.centerYAnchor constant:-55],
-            [title.topAnchor constraintEqualToAnchor:icon.bottomAnchor constant:18],
-            [title.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor constant:28],
-            [title.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor constant:-28],
-            [detail.topAnchor constraintEqualToAnchor:title.bottomAnchor constant:10],
-            [detail.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor constant:28],
-            [detail.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor constant:-28],
-            [closeButton.topAnchor constraintEqualToAnchor:detail.bottomAnchor constant:28],
-            [closeButton.centerXAnchor constraintEqualToAnchor:vc.view.centerXAnchor],
-            [closeButton.widthAnchor constraintEqualToConstant:180],
-            [closeButton.heightAnchor constraintEqualToConstant:48]
-        ]];
+        vc.view.backgroundColor = UIColor.clearColor;
 
         ALShieldWindow.rootViewController = vc;
         ALShieldWindow.hidden = NO;
         [ALShieldWindow makeKeyAndVisible];
+
+        NSString *message = [NSString stringWithFormat:@"%@\n\n%@", ALBlockedMessage(), appName.length ? appName : bundleID];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"AegisLock"
+                                                                        message:message
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"确定"
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(__unused UIAlertAction *action) {
+            ALDismissAlertAndSuspend();
+        }]];
+        [vc presentViewController:alert animated:YES completion:nil];
     });
 }
 
@@ -101,7 +71,9 @@ static void ALCheckCurrentApplication(void) {
         return;
     }
     NSString *bundleID = NSBundle.mainBundle.bundleIdentifier;
-    if (!ALIsBundleAllowed(bundleID)) ALShowShieldAndSuspend();
+    NSString *appName = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    if (!appName.length) appName = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+    if (!ALIsBundleAllowed(bundleID)) ALShowBlockedAlert(bundleID, appName);
     else ALHideShield();
 }
 

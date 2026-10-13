@@ -19,6 +19,8 @@ BOOL ALVerifyPasscode(NSString *passcode);
 BOOL ALSetPasscode(NSString *passcode);
 void ALSetRepairMode(BOOL enabled);
 NSString *ALBlockedMessage(void);
+NSArray<NSDictionary *> *ALAccessLogs(void);
+void ALAppendAccessLog(NSString *bundleID, NSString *appName);
 
 #ifdef __cplusplus
 }

@@ -39,6 +39,12 @@
             <key>isController</key><true/>
         </dict>
         <dict>
+            <key>cell</key><string>PSLinkCell</string>
+            <key>label</key><string>查看操作日志</string>
+            <key>detail</key><string>ALAccessLogController</string>
+            <key>isController</key><true/>
+        </dict>
+        <dict>
             <key>cell</key><string>PSGroupCell</string>
             <key>label</key><string>提示</string>
         </dict>

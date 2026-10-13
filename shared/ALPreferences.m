@@ -144,3 +144,29 @@ NSString *ALBlockedMessage(void) {
     NSString *s = ALReadPrefs()[@"blockedMessage"];
     return s.length ? s : @"维修模式已开启，此应用不可访问";
 }
+
+NSArray<NSDictionary *> *ALAccessLogs(void) {
+    id logs = ALReadPrefs()[@"accessLogs"];
+    if (![logs isKindOfClass:NSArray.class]) return @[];
+    NSMutableArray<NSDictionary *> *validLogs = [NSMutableArray array];
+    for (id entry in (NSArray *)logs) {
+        if ([entry isKindOfClass:NSDictionary.class] &&
+            [entry[@"timestamp"] respondsToSelector:@selector(doubleValue)] &&
+            [entry[@"bundleID"] isKindOfClass:NSString.class]) {
+            [validLogs addObject:entry];
+        }
+    }
+    return validLogs;
+}
+
+void ALAppendAccessLog(NSString *bundleID, NSString *appName) {
+    if (!bundleID.length) return;
+    NSMutableArray<NSDictionary *> *logs = [ALAccessLogs() mutableCopy];
+    [logs addObject:@{
+        @"timestamp": @([NSDate date].timeIntervalSince1970),
+        @"bundleID": bundleID,
+        @"appName": appName.length ? appName : bundleID,
+        @"action": @"blockedLaunch"
+    }];
+    ALWrite(@"accessLogs", logs);
+}

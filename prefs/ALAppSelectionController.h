@@ -1,4 +1,4 @@
-#import <Preferences/PSListController.h>
+#import <Preferences/PSViewController.h>
 
-@interface ALAppSelectionController : PSListController
+@interface ALAppSelectionController : PSViewController
 @end

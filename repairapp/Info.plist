@@ -6,8 +6,18 @@
 <key>CFBundleName</key><string>AegisRepair</string>
 <key>CFBundleExecutable</key><string>AegisRepair</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>1.0.2</string>
-<key>CFBundleShortVersionString</key><string>1.0.2</string>
+<key>CFBundleVersion</key><string>1.0.3</string>
+<key>CFBundleShortVersionString</key><string>1.0.3</string>
+<key>CFBundleIconFiles</key>
+<array><string>AppIcon60x60</string></array>
+<key>CFBundleIcons</key>
+<dict>
+    <key>CFBundlePrimaryIcon</key>
+    <dict>
+        <key>CFBundleIconFiles</key><array><string>AppIcon60x60</string></array>
+        <key>UIPrerenderedIcon</key><false/>
+    </dict>
+</dict>
 <key>LSRequiresIPhoneOS</key><true/>
 <key>UILaunchScreen</key><dict/>
 <key>NSCameraUsageDescription</key><string>用于维修人员测试前后摄像头，不会自动保存照片。</string>

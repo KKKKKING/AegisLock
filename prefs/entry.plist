@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><array><dict>
-<key>cell</key><string>PSLinkCell</string>
-<key>label</key><string>AegisLock</string>
-<key>bundle</key><string>AegisLockPrefs</string>
-<key>detail</key><string>RootListController</string>
-<key>isController</key><true/>
-</dict></array></plist>
+<plist version="1.0">
+<dict>
+    <key>entry</key>
+    <dict>
+        <key>bundle</key><string>AegisLockPrefs</string>
+        <key>cell</key><string>PSLinkCell</string>
+        <key>detail</key><string>RootListController</string>
+        <key>isController</key><true/>
+        <key>label</key><string>AegisLock</string>
+    </dict>
+</dict>
+</plist>

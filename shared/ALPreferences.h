@@ -11,6 +11,7 @@ FOUNDATION_EXPORT NSString * const ALPrefsChangedNotification;
 
 BOOL ALRepairModeEnabled(void);
 NSArray<NSString *> *ALAllowedBundleIDs(void);
+void ALSetAllowedBundleIDs(NSArray<NSString *> *bundleIDs);
 BOOL ALIsBundleAllowed(NSString * _Nullable bundleID);
 BOOL ALHasPasscode(void);
 BOOL ALVerifyPasscode(NSString *passcode);

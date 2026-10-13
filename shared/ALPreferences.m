@@ -50,12 +50,16 @@ BOOL ALRepairModeEnabled(void) {
 }
 
 NSArray<NSString *> *ALAllowedBundleIDs(void) {
-    NSString *raw = ALReadPrefs()[@"allowedBundleIDs"];
+    id raw = ALReadPrefs()[@"allowedBundleIDs"];
     NSMutableOrderedSet *set = [NSMutableOrderedSet orderedSetWithArray:@[
         @"com.aegislock.repair",
         @"com.apple.springboard"
     ]];
-    if ([raw isKindOfClass:NSString.class]) {
+    if ([raw isKindOfClass:NSArray.class]) {
+        for (id value in (NSArray *)raw) {
+            if ([value isKindOfClass:NSString.class] && [value length]) [set addObject:value];
+        }
+    } else if ([raw isKindOfClass:NSString.class]) {
         NSCharacterSet *trim = NSCharacterSet.whitespaceAndNewlineCharacterSet;
         for (NSString *part in [raw componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",;\n"]]) {
             NSString *value = [part stringByTrimmingCharactersInSet:trim];
@@ -63,6 +67,18 @@ NSArray<NSString *> *ALAllowedBundleIDs(void) {
         }
     }
     return set.array;
+}
+
+void ALSetAllowedBundleIDs(NSArray<NSString *> *bundleIDs) {
+    NSMutableOrderedSet<NSString *> *clean = [NSMutableOrderedSet orderedSet];
+    for (id value in bundleIDs) {
+        if ([value isKindOfClass:NSString.class] && [value length] &&
+            ![value isEqualToString:@"com.aegislock.repair"] &&
+            ![value isEqualToString:@"com.apple.springboard"]) {
+            [clean addObject:value];
+        }
+    }
+    ALWrite(@"allowedBundleIDs", clean.array);
 }
 
 BOOL ALIsBundleAllowed(NSString *bundleID) {

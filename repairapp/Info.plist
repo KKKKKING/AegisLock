@@ -6,9 +6,10 @@
 <key>CFBundleName</key><string>AegisRepair</string>
 <key>CFBundleExecutable</key><string>AegisRepair</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>0.1.1</string>
-<key>CFBundleShortVersionString</key><string>0.1.1</string>
+<key>CFBundleVersion</key><string>1.0.0</string>
+<key>CFBundleShortVersionString</key><string>1.0</string>
 <key>LSRequiresIPhoneOS</key><true/>
 <key>UILaunchScreen</key><dict/>
 <key>NSCameraUsageDescription</key><string>用于维修人员测试前后摄像头，不会自动保存照片。</string>
+<key>NSFaceIDUsageDescription</key><string>用于验证 Face ID 传感器和生物识别认证流程是否正常。</string>
 </dict></plist>

@@ -1,4 +1,4 @@
-# AegisLock Repair Mode 0.1.1
+# AegisLock Repair Mode 1.0
 
 面向越狱 iPhone 的维修/访客模式原型。目标：维修人员即使知道设备锁屏密码，也不能退出维修模式；退出只接受单独的 AegisLock 数字密码。
 
@@ -7,7 +7,7 @@
 - 维修模式独立 4–12 位数字密码（与设备密码、Face ID 无关）
 - 密码使用随机 salt + SHA-256 保存，不明文保存
 - 维修模式下默认仅允许 `AegisRepair`
-- 可手工追加允许访问的 App Bundle ID
+- 在设置中按 App 图标和名称选择维修模式允许访问的 App
 - 被禁止的 UIKit App 激活后立即显示隐私遮罩并挂起
 - AegisRepair 内置“退出维修模式”，只接受独立密码，因此即使“设置”被锁也能安全退出
 - 附带 AegisRepair：

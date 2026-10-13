@@ -1,16 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><array>
-<dict><key>cell</key><string>PSGroupCell</string><key>label</key><string>维修模式</string><key>footerText</key><string>开启后只允许 AegisRepair 和你手动添加的 Bundle ID。退出必须使用独立密码，不接受设备密码或 Face ID。</string></dict>
-<dict><key>cell</key><string>PSSwitchCell</string><key>label</key><string>开启维修模式</string><key>key</key><string>repairEnabled</string><key>default</key><false/></dict>
-<dict><key>cell</key><string>PSButtonCell</string><key>label</key><string>设置 / 修改独立密码</string><key>action</key><string>setRepairPasscode</string></dict>
-<dict><key>cell</key><string>PSButtonCell</string><key>label</key><string>使用密码退出维修模式</string><key>action</key><string>disableRepairMode</string></dict>
-
-<dict><key>cell</key><string>PSGroupCell</string><key>label</key><string>额外允许的 App</string><key>footerText</key><string>默认仅允许 AegisRepair。多个 Bundle ID 用逗号分隔。为了隐私，默认不允许“设置、电话、相册、文件、微信、Telegram”等。</string></dict>
-<dict><key>cell</key><string>PSEditTextCell</string><key>label</key><string>允许 Bundle ID</string><key>key</key><string>allowedBundleIDs</string><key>defaults</key><string>com.aegislock.repairmode</string><key>default</key><string></string><key>placeholder</key><string>例如 com.apple.calculator</string></dict>
-
-<dict><key>cell</key><string>PSGroupCell</string><key>label</key><string>提示</string></dict>
-<dict><key>cell</key><string>PSEditTextCell</string><key>label</key><string>拦截提示文字</string><key>key</key><string>blockedMessage</string><key>defaults</key><string>com.aegislock.repairmode</string><key>default</key><string>维修模式已开启，此应用不可访问</string></dict>
-
-<dict><key>cell</key><string>PSGroupCell</string><key>footerText</key><string>注意：这是越狱环境下的隐私隔离，不等同于苹果硬件级安全边界。具备 Root/SSH 能力的维修人员仍可能绕过限制。</string></dict>
-</array></plist>
+<plist version="1.0">
+<dict>
+    <key>title</key>
+    <string>AegisLock</string>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>label</key><string>维修模式</string>
+            <key>footerText</key><string>开启后只允许 AegisRepair 和你选中的 App。退出必须使用独立密码，不接受设备密码或 Face ID。</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSSwitchCell</string>
+            <key>label</key><string>开启维修模式</string>
+            <key>key</key><string>repairEnabled</string>
+            <key>default</key><false/>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSButtonCell</string>
+            <key>label</key><string>设置 / 修改独立密码</string>
+            <key>action</key><string>setRepairPasscode</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSButtonCell</string>
+            <key>label</key><string>使用密码退出维修模式</string>
+            <key>action</key><string>disableRepairMode</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>label</key><string>App 访问权限</string>
+            <key>footerText</key><string>按名称和图标选择维修人员在维修模式中可以使用的 App。</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSLinkCell</string>
+            <key>label</key><string>选择允许使用的 App</string>
+            <key>detail</key><string>ALAppSelectionController</string>
+            <key>isController</key><true/>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>label</key><string>提示</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSEditTextCell</string>
+            <key>label</key><string>拦截提示文字</string>
+            <key>key</key><string>blockedMessage</string>
+            <key>defaults</key><string>com.aegislock.repairmode</string>
+            <key>default</key><string>维修模式已开启，此应用不可访问</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>footerText</key><string>注意：这是越狱环境下的隐私隔离，不等同于苹果硬件级安全边界。具备 Root/SSH 能力的维修人员仍可能绕过限制。</string>
+        </dict>
+    </array>
+</dict>
+</plist>
